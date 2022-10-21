@@ -1,5 +1,4 @@
-const { server_log } = require('.//../channel.json');
-const { makeEmbed } = require('.//../embed');
+const { MessageDeletion } = require('.//../channel.json');
 
 module.exports = (client) => {
     client.on("messageDelete", async (message) => {
@@ -8,39 +7,50 @@ module.exports = (client) => {
            if (message.author.bot) return;
            const avatar = message.author.displayAvatarURL({ dynamic: true })
            const username = `${message.author.tag}`
-           const link = message.url
            const usertag = `<@${message.author.id}>`
            const sentchannel = `<#${message.channelId}>`
-           const channel = await client.channels.fetch(server_log);
+           const channel = await client.channels.fetch(MessageDeletion);
            const urls = message.attachments.map(x => x.url).join("\n") ;
-           await channel.send({ embeds: [ makeEmbed(
-               'Message deletion:',
-               message.content,
-               username,
-               avatar,
-               avatar,
-               'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-               [
-               {
-                   name: "Author name",
-                   value: usertag,
-                   inline: false
-               },
-               {
-                   name: "Sent channel",
-                   value: sentchannel,
-                   inline: false
-               },
-               {
-                name: "Message link:",
-                value: link,
-                inline: false
-            }
-                ],
-               'Some Russian nonsense',
-               'Attachments',
-               urls
-             ) ] });
+
+           const exampleEmbed = {
+            color: 0x0099ff,
+            title: 'Message Deletion: ',
+            author: {
+                name: username,
+                icon_url: avatar,
+                url: avatar,
+            },
+            description: message.content,
+            thumbnail: {
+                url: avatar,
+            },
+            fields: [
+                {
+                    name: 'User:',
+                    value: usertag,
+                    inline: true,
+                },
+                {
+                    name: 'Attachments:',
+                    value: `"${urls}"`,
+                    inline: true,
+                },
+                {
+                    name: 'Sent Channel:',
+                    value: sentchannel,
+                    inline: true,
+                },
+                
+            ],
+            timestamp: new Date(),
+            footer: {
+                text: username,
+                icon_url: avatar,
+            },
+        };
+        
+        
+        channel.send({content: `${message.id}`, embeds: [exampleEmbed] });
         } 
         catch (error) 
         {

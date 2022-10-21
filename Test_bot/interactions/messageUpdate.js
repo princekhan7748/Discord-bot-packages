@@ -1,6 +1,4 @@
-const { server_log } = require('.//../channel.json');
-const { makeEmbed } = require('.//../embed');
-
+const { MessageUpdates } = require('.//../channel.json');
 
 module.exports = (client) => {
     client.on("messageUpdate", async (oldMessage, newMessage) => {
@@ -12,67 +10,51 @@ module.exports = (client) => {
             const usertag = `<@${oldMessage.author.id}>`
             const sentchannel = `<#${oldMessage.channelId}>`
             const urls = oldMessage.attachments.map(x => x.url).join("\n")
-            const nurls = newMessage.attachments.map(x => x.url).join("\n")
-            const channel = await client.channels.fetch(server_log);
+            const channel = await client.channels.fetch(MessageUpdates);
 
-            await channel.send(
-                { embeds: [ makeEmbed(
-                'Message edit: Old Message',
-                oldMessage.content,
-                username,
-                avatar,
-                avatar,
-                'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-                [
+            const exampleEmbed = {
+                color: 0x0099ff,
+                title: 'Message Creation: ',
+                url: link,
+                author: {
+                    name: username,
+                    icon_url: avatar,
+                    url: avatar,
+                },
+                description: newMessage.content,
+                thumbnail: {
+                    url: avatar,
+                },
+                fields: [
                     {
-                        name: "Author name",
+                        name: 'User:',
                         value: usertag,
-                        inline: false
+                        inline: true,
                     },
                     {
-                        name: "Sent channel",
+                        name: 'Attachments:',
+                        value: `"${urls}"`,
+                        inline: true
+                    },
+                    {
+                        name: 'Sent Channel:',
                         value: sentchannel,
-                        inline: false
+                        inline: true,
                     },
                     {
-                     name: "Message link:",
-                     value: link,
-                     inline: false
-                 }
-                     ],
-                     'Some Russian Nonsense',
-                    'Attachements',
-                    urls 
-                ) ] });
-            await channel.send(
-                { embeds: [ makeEmbed(
-                'Message edit: New Message',
-                newMessage.content,
-                username,
-                avatar,
-                avatar,
-                'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-                [
-                    {
-                        name: "Author name",
-                        value: usertag,
-                        inline: false
+                        name: 'Message Link:',
+                        value: link,
+                        inline: true,
                     },
-                    {
-                        name: "Sent channel",
-                        value: sentchannel,
-                        inline: false
-                    },
-                    {
-                     name: "Message link:",
-                     value: link,
-                     inline: false
-                 }
-                     ],
-                     'Some Russian Nonsense',
-                    'Attachements',
-                    nurls 
-                ) ] });
+                    
+                ],
+                timestamp: new Date(),
+                footer: {
+                    text: username,
+                    icon_url: avatar,
+                },
+            };
+            channel.send({content: `${oldMessage.id}`, embeds: [exampleEmbed] });
         } 
         catch (error) 
         {

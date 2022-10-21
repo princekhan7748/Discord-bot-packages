@@ -1,5 +1,4 @@
-const { server_log } = require('.//../channel.json');
-const { makeEmbed } = require('.//../embed');
+const { MessageCreation } = require('.//../channel.json');
 
 module.exports = (client) => {
     client.on("messageCreate", async (message) => {
@@ -9,39 +8,69 @@ module.exports = (client) => {
            if (message.author.bot) return;
            const avatar = message.author.displayAvatarURL({ dynamic: true })
            const username = `${message.author.tag}`
-           const link = message.url
            const usertag = `<@${message.author.id}>`
+           const link = message.url
            const sentchannel = `<#${message.channelId}>`
-           const channel = await client.channels.fetch(server_log);
+           const channel = await client.channels.fetch(MessageCreation);
            const urls = message.attachments.map(x => x.url).join("\n") ;
-           await channel.send({ embeds: [ makeEmbed(
-               'Message creation:',
-               message.content,
-               username,
-               avatar,
-               avatar,
-               'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-               [
-               {
-                   name: "Author name",
-                   value: usertag,
-                   inline: false
-               },
-               {
-                   name: "Sent channel",
-                   value: sentchannel,
-                   inline: false
-               },
-               {
-                name: "Message link:",
-                value: link,
-                inline: false
-            }
-                ],
-               'Some Russian nonsense',
-               'Attachments',
-               urls
-             ) ] });
+           const reply = `https://discord.com/channels/${message.reference?.guildId}/${message.reference?.channelId}/${message.reference?.messageId}`
+           const repliedtag = message.reference?.messageId
+
+           const exampleEmbed = {
+            color: 0x0099ff,
+            title: 'Message Creation: ',
+            url: link,
+            author: {
+                name: username,
+                icon_url: avatar,
+                url: avatar,
+            },
+            description: message.content,
+            thumbnail: {
+                url: avatar,
+            },
+            fields: [
+                {
+                    name: 'User:',
+                    value: usertag,
+                    inline: true,
+                },
+                {
+                    name: 'Attachments:',
+                    value: `"${urls}"`,
+                    inline: true,
+                },
+                {
+                    name: 'Sent Channel:',
+                    value: sentchannel,
+                    inline: true,
+                },
+                {
+                    name: 'Message Link:',
+                    value: link,
+                    inline: true,
+                },
+                {
+                    name: 'Reply to:',
+                    value: reply,
+                    inline: true,
+                },
+                {
+                    name: 'replied message tag',
+                    value: `"${repliedtag}"`,
+                    inline: true,
+                },
+                
+            ],
+            timestamp: new Date(),
+            footer: {
+                text: username,
+                icon_url: avatar,
+            },
+        };
+        
+        
+        channel.send({content: `${message.id}`, embeds: [exampleEmbed] });
         } 
         catch (error) 
         {

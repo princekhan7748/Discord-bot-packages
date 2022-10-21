@@ -1,39 +1,68 @@
+
 const { server_log } = require('../channel.json');
-const { makeEmbed } = require('../embed');
+
 
 module.exports = (client) => {
     client.on("channelCreate", async (channel) => {
         try 
         {
+            // channel.guild.fetchAuditLogs({type: "CHANNEL_CREATE"})
+            // .then(audit => console.log(audit.entries.first()))
+            // .catch(console.error)
+
+            channel.guild.fetchAuditLogs({type: "CHANNEL_CREATE"})
+            .then(audit => {
+
+               const a = client.execute
+
+            })
+            .catch(console.error)
+
+
+
+
            const schannel = await client.channels.fetch(server_log);
-           await schannel.send({ embeds: [ makeEmbed(
-            'Channel creation:',
-            channel.name,
-            'Nothing',
-            'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-            'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-            'https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg',
-            [
-            {
-                name: "Author name",
-                value: "usertag",
-                inline: false
+           const username = channel.client.id
+           const exampleEmbed = {
+            color: 0x0099ff,
+            title: 'Channel Creation: ',
+            author: {
+                name: username,
+                icon_url: "https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg",
+                url: "https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg",
             },
-            {
-                name: "Sent channel",
-                value: "sentchannel",
-                inline: false
+            description: channel.name,
+            thumbnail: {
+                url: "https://cdn.discordapp.com/attachments/883834437408792607/884116353378836530/discord.jpg",
             },
-            {
-                name: "Sent channel",
-                value: `${newChannel}`,
-                inline: false
-            }
+            fields: [
+                {
+                    name: 'User:',
+                    value: "usertag",
+                    inline: true,
+                },
+                {
+                    name: 'Attachments:',
+                    value: `"${urls}"`,
+                    inline: true,
+                },
+                {
+                    name: 'Sent Channel:',
+                    value: "sentchannel",
+                    inline: true,
+                },
+                
             ],
-            'Some Russian nonsense',
-            'Attachments',
-            'urls'
-          ) ] });
+            timestamp: new Date(),
+            footer: {
+                text: username,
+                icon_url: "avatar",
+            },
+        };
+        
+        
+        schannel.send({content: `$message.id}`, embeds: [exampleEmbed] });
+       
         } 
         catch (error) 
         {
